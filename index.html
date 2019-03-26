@@ -242,6 +242,153 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/最长回文子串/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kexin Wu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jessica's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/26/最长回文子串/" itemprop="url">最长回文子串</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-26T21:23:06+08:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LeetCode/" itemprop="url" rel="index">
+                    <span itemprop="name">LeetCode</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。</p>
+<p>示例 1：</p>
+<p>输入: “babad”<br>输出: “bab”<br>注意: “aba” 也是一个有效答案。<br>示例 2：</p>
+<p>输入: “cbbd”<br>输出: “bb”</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>暴力方法：两层for循环，第一层是i为下标，第二层以j=i+1为始点,判断i以后的串是否存在回文串，当发现s[i]==s[j]时说明有回文的可能，这时将范围缩小到[i,j]之间，以k属于[i+1,(i+j-1)/2],t属于[j-((i+j-1)/2),j-1],比较s[k]与s[t]是否相等（其实就是判断对称位置是否相同），只要有一个对不相等就不是回文串，就break出最近的for循环，当全部相等时，将长度与之前长度比较，大于时，更新count值，更新mark数组（返回字符串区间）。注意：s.substring（start，end），返回的区间是[start,end)。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>【java】<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">longestPalindrome</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> i,j,k,t,count=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">int</span> mark[]= &#123;<span class="number">0</span>,<span class="number">0</span>&#125;;</span><br><span class="line">		<span class="keyword">int</span> len=s.length();</span><br><span class="line">        <span class="keyword">if</span>(len==<span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;len;i++) &#123;</span><br><span class="line">			<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;len;j++) &#123;</span><br><span class="line">				<span class="keyword">if</span>(s.charAt(i)==s.charAt(j)) &#123;</span><br><span class="line">					<span class="keyword">for</span>(k=i+<span class="number">1</span>,t=j-<span class="number">1</span>;k&lt;=(i+j-<span class="number">1</span>)/<span class="number">2</span>;k++,t--) &#123;</span><br><span class="line">						<span class="keyword">if</span>(s.charAt(k)!=s.charAt(t)) &#123;</span><br><span class="line">							<span class="keyword">break</span>;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="comment">//是回文子串，比较长度，更新数据</span></span><br><span class="line">					<span class="keyword">if</span>(k&gt;(i+j-<span class="number">1</span>)/<span class="number">2</span>) &#123;</span><br><span class="line">						<span class="keyword">if</span>((j-i+<span class="number">1</span>)&gt;count) &#123;</span><br><span class="line">							count = j-i+<span class="number">1</span>;</span><br><span class="line">							mark[<span class="number">0</span>]=i;</span><br><span class="line">							mark[<span class="number">1</span>]=j;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">					</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> s.substring(mark[<span class="number">0</span>], mark[<span class="number">1</span>]+<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/25/分发饼干/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1398,7 +1545,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
