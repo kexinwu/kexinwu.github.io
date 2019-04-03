@@ -336,17 +336,19 @@
         
           
             <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我在vscode里用markdown编辑博客时，数学公式可以在编辑的preview中可以展现出来，但是发布到GitHub上，用游览器访问博客页面时，则是公式的LaTeX码，如下：</p>
-<p>f\left [ i,j \right ]=\left{\begin{matrix}true &amp; , j=i\\s[i]=s[j] &amp; ,j=i+1\\ s[i]=s[j] and  f[i+1][j-1]=true&amp; ,j&gt;i+1\end{matrix}\right.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f\left [ i,j \right ]=\left\&#123;\begin&#123;matrix&#125;true &amp; , j=i\\s[i]=s[j] &amp; ,j=i+1\\ s[i]=s[j] and  f[i+1][j-1]=true&amp; ,j&gt;i+1\end&#123;matrix&#125;\right.</span><br></pre></td></tr></table></figure>
 <h2 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h2><p><a href="https://www.jianshu.com/p/7ab21c7f0674" target="_blank" rel="noopener">参考链接1</a></p>
-<p>Hexo默认使用”hexo-renderer-marked”引擎渲染网页，该引擎会把一些特殊的markdown符号转换为相应的html标签，比如在markdown语法中，下划线代表斜体，会被渲染引擎处理为$<em>$标签。<br>因为类Latex格式书写的数学公式下划线表示下标，有特殊的含义，如果被强制转换为$<em>$标签，那么MathJax引擎在渲染数学公式的时候就会出错。例如，$x_i$在开始被渲染的时候，处理为$x<em>i</em>$，这样MathJax引擎就认为该公式有语法错误，因为不会渲染。</em></em></p>
+<p>Hexo默认使用”hexo-renderer-marked”引擎渲染网页，该引擎会把一些特殊的Markdown符号转换为相应的html标签，比如在Markdown语法中，下划线代表斜体，会被渲染引擎处理为特殊标签。<br>因为类Latex格式书写的数学公式下划线表示下标，有特殊的含义，如果被强制转换为特殊标签，那么MathJax引擎在渲染数学公式的时候就会出错。</p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>1.更换Hexo的markdown渲染引擎，hexo-renderer-kramed引擎是在默认的渲染引擎hexo-renderer-marked的基础上修改了一些bug，两者比较接近，也比较轻量级。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
-<p>执行上面的命令即可，先卸载原来的渲染引擎，再安装新的。<br>然后，跟换引擎后行间公式可以正确渲染了，但是这样还没有完全解决问题，行内公式的渲染还是有问题，因为hexo-renderer-kramed引擎也有语义冲突的问题。接下来到博客根目录下，找到node_modules\kramed\lib\rules\inline.js，把第11行的escape变量的值做相应的修改,这一步是在原基础上取消了对\,{,}的转义(escape)。<br>同时把第20行的em变量也要做相应的修改。</p>
+<p>执行上面的命令即可，先卸载原来的渲染引擎，再安装新的。<br>然后，更换引擎后行间公式可以正确渲染了，但是这样还没有完全解决问题，行内公式的渲染还是有问题，因为hexo-renderer-kramed引擎也有语义冲突的问题。接下来到博客根目录下，找到node_modules\kramed\lib\rules\inline.js，把第11行的escape变量的值做相应的修改,这一步是在原基础上取消了对\,{,}的转义(escape)。同时把第20行的em变量也要做相应的修改。</p>
 <p><img src="uploads/images/inline修改1.png" alt="图片1"></p>
 <p>2.在主题中开启Mathjax开关<br>进入到主题目录，找到_config.yml配置问题，把mathjax默认的false修改为true，把cdn也修改一下（这是后来我才发现的，<a href="https://doraemonzzz.com/2018/05/15/Hexo%E5%8D%9A%E5%AE%A2next%E4%B8%BB%E9%A2%98%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E6%B8%B2%E6%9F%93%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener">参考链接2</a>）具体如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># MathJax Support</span><br><span class="line">mathjax:</span><br><span class="line">  enable: true</span><br><span class="line">  per_page: false</span><br><span class="line">  #cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML</span><br><span class="line">  cdn: //cdn.staticfile.org/MathJax/MathJax-2.6-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span><br></pre></td></tr></table></figure>
 <p>还需要在文章的Front-matter里打开mathjax开关，如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">title: 最长回文子串</span><br><span class="line">categories: LeetCode</span><br><span class="line">data: 2019/3/26 21:30</span><br><span class="line">updata: 2019/3/31 16:35</span><br><span class="line">mathjax: true</span><br></pre></td></tr></table></figure>
+<p>以上操作之后，就可以在网页上看到渲染的公式啦~~开心</p>
+<p><a href="http://latex.codecogs.com/eqneditor/editor.php" target="_blank" rel="noopener">推荐公式编辑器链接</a>：<a href="http://latex.codecogs.com/eqneditor/editor.php" target="_blank" rel="noopener">http://latex.codecogs.com/eqneditor/editor.php</a></p>
 
           
         
